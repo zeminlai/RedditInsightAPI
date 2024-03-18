@@ -9,9 +9,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRedditInsightService, RedditInsightService>();
-builder.Services.AddCors(options => options.AddPolicy(name: "RedditInsightAngularOrigins", policy =>
+
+builder.Services.AddCors(options => options.AddPolicy(name: "RedditInsightAngular", policy =>
 {
-    policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+    policy.WithOrigins(
+        "http://localhost:4200",
+        "https://redditinsight.netlify.app",
+        "https://redditinsight.pro"
+        ).AllowAnyMethod().AllowAnyHeader();
 }));
 
 var app = builder.Build();
@@ -23,7 +28,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("RedditInsightAngularOrigins");
+app.UseCors("RedditInsightAngular");
 
 app.UseHttpsRedirection();
 
