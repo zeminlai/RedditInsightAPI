@@ -31,7 +31,7 @@ namespace RedditInsightAPI.Services.RedditInsightService
 
             int urlPosition = 0;
 
-            Parallel.ForEach(urlList, new ParallelOptions { MaxDegreeOfParallelism = 5 }, url =>
+            Parallel.ForEach(urlList, new ParallelOptions { MaxDegreeOfParallelism = 10 }, url =>
             {
                 urlPosition++;
                 RedditPost redditPost = GetSingleRedditPost(url, urlPosition);
@@ -49,15 +49,15 @@ namespace RedditInsightAPI.Services.RedditInsightService
 
         private async Task<List<string>> GetUrlListFromHiddenGoogleApi(string searchTerm)
         {
-            //var testclient = new RestClient("https://www.google.com/search?q=site%3A%20reddit.com%20best%20backend&oq=site%3A");
-            var testclient = new RestClient("https://www.google.com/search");
+            int maxUrls = 10;
+            var client = new RestClient("https://www.google.com/search");
             var request = new RestRequest(Method.GET);
             request.AddParameter("q", "site: reddit.com " + searchTerm);
             request.AddParameter("oq", "site:");
             request.AddCookie("1P_JAR", "2024-03-05-05");
             request.AddCookie("NID", "512=Kp8rOU5_5GiqgLL0mAtnBZqmo0Qa4kbLP2iNnyx9xG9WQ1gTPc0GPPNUL46kBqLlsLBaTg8t-9G2X3glyuhUH4TqQ9TjeLRXiBlNUWrTx33MFeqLLSCSNNExEs7e1GXPPmsp0bVGJ6TyU6cqA4PG_mbEqUGxX5NqrcuwDd7mdDrpA6UwmcwMusV6MpK3YQ9C6x_s3VZTAc7PurzqrJ4mAXNupheoG33eZCQ4Re3GXlEEzhuYlNDFK4qKxsUfJhU609KRLCcFt2v0f7wMazg66l0WNmVqCI16fzGKKR-s06FSGK2q-Shc13NHCG4gwhBNuHRJL6GptMEVMKRt28VtQwzpOTIK6hanokrHObxMEjjFHYu3UoWc_6VS3-_sL3gbNPDBln7DzSkrGA2iJRhOJJJY6NVt4CYGfx7BLZn-KV2q82HaxvkYpxdhcYoJAOUOGDabznHgTZUI-VndnlhHoLAV3xBG3UD52zTBh62qi90P2wQEAv1okoMRjjX8Z5hV88EGK9390TCQnc6dLFT3rhdCNLQQXOFs4gDisZftAFtEcQjjfbEJTsozpVdxdoM5VKNzT4I9iGV80ZTbbG3yU7D0s0RcM3VTYLEtQ_YFjQVc_8LVIcoHvhfQbKzMxldTHiDiMaC0u0P798ZLx51z8IsiatHCALSCH4dF");
             request.AddCookie("AEC", "Ae3NU9OcQlqOTg_YYKxjX3VRRT0qVuI1awfSiGb8tam-QWweZOqUI1dtaw");
-            IRestResponse response = testclient.Execute(request);
+            IRestResponse response = client.Execute(request);
 
             var doc = new HtmlDocument();
             doc.LoadHtml(response.Content);
@@ -76,7 +76,7 @@ namespace RedditInsightAPI.Services.RedditInsightService
             googleApiUrlList = googleApiUrlList
                     .Where(url => url.Contains("https://www.reddit.com") && url.Contains("/comments/"))
                     .Where(url => (url.Count(c => c == '/') > 5))
-                    .Take(5).ToList();
+                    .Take(maxUrls).ToList();
 
             return googleApiUrlList;
         }
@@ -84,7 +84,7 @@ namespace RedditInsightAPI.Services.RedditInsightService
         private RedditPost GetSingleRedditPost(string url, int urlPosition)
         {
             Console.WriteLine("Getting single reddit post:" + urlPosition);
-            int maxComments = 10;
+            int maxComments = 5;
             var reddit = new RedditClient(appId: "vS5P8MkiKU1sd7cOQExJ4w", appSecret: "p1TGodFkUvlUSzPmmsacO6aTNgihgw", refreshToken: "2360522660282-Shxy4LKZk3-6OPm7sxd2VJp1urAj4A");
 
             // Get the ID from the permalink, then preface it with "t3_" to convert it to a Reddit fullname.
@@ -117,7 +117,7 @@ namespace RedditInsightAPI.Services.RedditInsightService
                 Comments = new List<RedditComment>(),
                 Link = url,
             };
- 
+
             var comments = post.Comments.GetConfidence().Take(maxComments);
             foreach (Comment comment in comments)
             {
