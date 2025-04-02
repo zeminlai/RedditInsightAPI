@@ -22,7 +22,7 @@ namespace RedditInsightAPI.Services.RedditInsightService
             Console.WriteLine("searchTerm: " + searchTerm);
 
             //List<string> urlList = await GetUrlListFromWebScrape(searchTerm);
-            List<string> urlList = await GetUrlListFromHiddenGoogleApi(searchTerm);
+            List<string> urlList = await GetUrlListFromGoogleApi(searchTerm);
 
             GetRedditInsightResultsDto redditInsightResults = new GetRedditInsightResultsDto
             {
@@ -54,9 +54,15 @@ namespace RedditInsightAPI.Services.RedditInsightService
             var request = new RestRequest(Method.GET);
             request.AddParameter("q", "site: reddit.com " + searchTerm);
             request.AddParameter("oq", "site:");
-            request.AddCookie("1P_JAR", "2024-03-05-05");
-            request.AddCookie("NID", "512=Kp8rOU5_5GiqgLL0mAtnBZqmo0Qa4kbLP2iNnyx9xG9WQ1gTPc0GPPNUL46kBqLlsLBaTg8t-9G2X3glyuhUH4TqQ9TjeLRXiBlNUWrTx33MFeqLLSCSNNExEs7e1GXPPmsp0bVGJ6TyU6cqA4PG_mbEqUGxX5NqrcuwDd7mdDrpA6UwmcwMusV6MpK3YQ9C6x_s3VZTAc7PurzqrJ4mAXNupheoG33eZCQ4Re3GXlEEzhuYlNDFK4qKxsUfJhU609KRLCcFt2v0f7wMazg66l0WNmVqCI16fzGKKR-s06FSGK2q-Shc13NHCG4gwhBNuHRJL6GptMEVMKRt28VtQwzpOTIK6hanokrHObxMEjjFHYu3UoWc_6VS3-_sL3gbNPDBln7DzSkrGA2iJRhOJJJY6NVt4CYGfx7BLZn-KV2q82HaxvkYpxdhcYoJAOUOGDabznHgTZUI-VndnlhHoLAV3xBG3UD52zTBh62qi90P2wQEAv1okoMRjjX8Z5hV88EGK9390TCQnc6dLFT3rhdCNLQQXOFs4gDisZftAFtEcQjjfbEJTsozpVdxdoM5VKNzT4I9iGV80ZTbbG3yU7D0s0RcM3VTYLEtQ_YFjQVc_8LVIcoHvhfQbKzMxldTHiDiMaC0u0P798ZLx51z8IsiatHCALSCH4dF");
-            request.AddCookie("AEC", "Ae3NU9OcQlqOTg_YYKxjX3VRRT0qVuI1awfSiGb8tam-QWweZOqUI1dtaw");
+            //request.AddCookie("1P_JAR", "2024-03-05-05");
+            request.AddCookie("SID", "g.a000ugjZC3GgtAZ3XsgWOkNJO2gbJhrD7vQK_UjkYTGCiff3Jk2DQ3QVAXg7_hzgAPNaEfL3DAACgYKASwSARUSFQHGX2MiGcnbOmlJReuRqQ_gbqmkehoVAUF8yKp-Ppg0sRQPT4zhlKBgNGHD0076");
+            request.AddCookie("__Secure-1PSID", "g.a000ugjZC3GgtAZ3XsgWOkNJO2gbJhrD7vQK_UjkYTGCiff3Jk2DEaEesNGCthXbDEqUvDWGnQACgYKAQwSARUSFQHGX2MigDyDZe_U4sMqAqPSSs9JUBoVAUF8yKqW0GGSyncs5-5IZvXN6J2J0076");
+            request.AddCookie("HSID", "A4yn-LtG4__r3cEtK");
+            request.AddCookie("SSID", "AF8njFyRUf46PXB2-");
+            request.AddCookie("APISID", "V3sa5vtCacUoKzdX/AJFkniZeZMWLVSL4X");
+            request.AddCookie("SAPISID", "9JajJzHSmDpqHL94/AwZFVm3t-KFFRW5H2");
+            request.AddCookie("NID", "NID=522=X7ILZPYkPIRGy_bY7mmRZiBVofhQxBw1C9XnbawLdNvMaYMjbI4BUDFVu9q6pQIpUmJn_itNyJID-QeEd9PpTNo4GSRHCCYlR72Rgdb9AqezxvEq3pH5FLAOuFn6TrV_RS3orm3h5-kGCTr3NxvOyMis6-h8IVsYDPDOdx07TH-cDJJIh0yTpkvEakKsZkzScjiGU5nyyFn_YzPvPiYBUYinKJJcfTzOmVn46QBeAsm1T48aQlsbmLQuVBl-M1x5utRU9nAVYxTi0yqk3krhyxyCf2N7ZPeOqNjfRqJNlZzgp5npMil5Uriydg5Cgs6lwfpZZHgJubcEGBVvARJqdWS_SANh-PkH6xkiTguhBG0bvAYv7Q5HVn1fYm6b1_5gtjd-VkBcbYhA4sBM-cpCuz_5Z9k4CZfULsm4iiCDTH2s-pelNu5RfdVpXZGh6cavD3eCYaQ3Y_erbqjnDaO5XALFBuYRjzl7KNZWxuegDKVBJVUNpyig1V7wvFYLmIEoP5ERm-V4vH-csHbJz9bi0WbjpSlroVvWFPKkz77py3Uq3UCy6fL-ISaZeGe1vxoAYkJwL_2aFn7S-KWHxGrZYbl37JY2LoHVndU9qpNsbvZrg6KLSUn-H8mzvx85qE8AYxVAoMFTt1Zv4H0YCcHrc35-w1QauCkni3zA9HSt-hbc8IACKT14m9kQcwm25RJKe0_K_gGLPTRAlKVHuPRgnioTmEcP0_56LtSmcyzldt1aSGwfdidgZyNUxVcT5U9WmLL2FZaBuI2nkuHfVVWeINpP4qBZZh_r2_7syYXKTG3E5dB5bZjTjOSLGfFW_3DTME8ILWJiLxP5Lzg46ZFmuxRl7EWd-NpkzOkizLyNC4QEYPUtLj9BsqxCLss");
+            request.AddCookie("AEC", "AVcja2eNVhTYqR8TleVeA5xkA-EGWQRn4w8iL-nSUqPsBlLYjJWJ_77RFQ");
             IRestResponse response = client.Execute(request);
 
             var doc = new HtmlDocument();
@@ -80,12 +86,60 @@ namespace RedditInsightAPI.Services.RedditInsightService
 
             return googleApiUrlList;
         }
+        private async Task<List<string>> GetUrlListFromGoogleApi(string searchTerm)
+        {
+            int maxUrls = 10;
+            var client = new HttpClient();
+
+            var builder = new UriBuilder("https://www.googleapis.com/customsearch/v1");
+            builder.Port = -1;
+            var query = HttpUtility.ParseQueryString(builder.Query);
+            query["key"] = "AIzaSyDaU1kU_RSH1RWgkLXvYmU_umVUfIEU8bU";
+            query["cx"] = "57bf992fba6c74a45";
+            query["q"] = "site:reddit.com " + searchTerm;
+            builder.Query = query.ToString();
+            string url = builder.ToString();
+
+            try
+            {
+                var response = await client.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+
+                var searchResult = JsonConvert.DeserializeObject<dynamic>(jsonResponse);
+                List<string> urlList = new List<string>();
+
+                if (searchResult.items != null)
+                {
+                    foreach (var item in searchResult.items)
+                    {
+                        string link = item.link.ToString();
+                        Console.WriteLine($"Found URL: {link}");
+                        urlList.Add(link);
+                    }
+                }
+
+                // Filter and limit results
+                urlList = urlList
+                    .Where(url => url.Contains("https://www.reddit.com") && url.Contains("/comments/"))
+                    .Where(url => (url.Count(c => c == '/') > 5))
+                    .Take(maxUrls)
+                    .ToList();
+
+                return urlList;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching URLs: {ex.Message}");
+                return new List<string>();
+            }
+        }
 
         private RedditPost GetSingleRedditPost(string url, int urlPosition)
         {
             Console.WriteLine("Getting single reddit post:" + urlPosition);
             int maxComments = 5;
-            var reddit = new RedditClient(appId: "vS5P8MkiKU1sd7cOQExJ4w", appSecret: "p1TGodFkUvlUSzPmmsacO6aTNgihgw", refreshToken: "2360522660282-Shxy4LKZk3-6OPm7sxd2VJp1urAj4A");
+            var reddit = new RedditClient(appId: "IoYkiBExqL67zvpHax8cXA", appSecret: "qkKymYZi0eb5I-PdSHqydNQxmhIHCg", refreshToken: "273912227236-WXvOz9T-L-JQ7JPGfAL5gDVpFkuZLg");
 
             // Get the ID from the permalink, then preface it with "t3_" to convert it to a Reddit fullname.
             Match match = Regex.Match(url, @"\/comments\/([a-z0-9]+)\/");
@@ -191,37 +245,37 @@ namespace RedditInsightAPI.Services.RedditInsightService
                 return urlList;
             }
         }
-        private async Task<List<string>> GetUrlListFromGoogleApi(string searchTerm)
-        {
-            HttpClient client = new HttpClient();
+        //private async Task<List<string>> GetUrlListFromGoogleApi(string searchTerm)
+        //{
+        //    HttpClient client = new HttpClient();
 
-            var builder = new UriBuilder("https://customsearch.googleapis.com/customsearch/v1");
-            builder.Port = -1;
-            var query = HttpUtility.ParseQueryString(builder.Query);
-            query["cx"] = "b1a638f038c914afc";
-            query["q"] = "site: reddit.com " + searchTerm;
-            query["key"] = "AIzaSyDMBMHZ-dGJymEqm8lX83QTePAjatjMmv8";
-            builder.Query = query.ToString();
-            string url = builder.ToString();
+        //    var builder = new UriBuilder("https://customsearch.googleapis.com/customsearch/v1");
+        //    builder.Port = -1;
+        //    var query = HttpUtility.ParseQueryString(builder.Query);
+        //    query["cx"] = "b1a638f038c914afc";
+        //    query["q"] = "site: reddit.com " + searchTerm;
+        //    query["key"] = "AIzaSyDMBMHZ-dGJymEqm8lX83QTePAjatjMmv8";
+        //    builder.Query = query.ToString();
+        //    string url = builder.ToString();
 
-            var responseString = await client.GetStringAsync(url);
-            var myDeserializedClass = JsonConvert.DeserializeObject<dynamic>(responseString);
+        //    var responseString = await client.GetStringAsync(url);
+        //    var myDeserializedClass = JsonConvert.DeserializeObject<dynamic>(responseString);
 
-            List<string> googleApiUrlList = new List<string>();
+        //    List<string> googleApiUrlList = new List<string>();
 
-            foreach (var items in myDeserializedClass.items)
-            {
-                googleApiUrlList.Add(items.link.ToString());
-                Console.WriteLine(items.link);
-            }
+        //    foreach (var items in myDeserializedClass.items)
+        //    {
+        //        googleApiUrlList.Add(items.link.ToString());
+        //        Console.WriteLine(items.link);
+        //    }
 
-            googleApiUrlList = googleApiUrlList
-                    .Where(url => url.Contains("https://www.reddit.com") && url.Contains("/comments/"))
-                    .Where(url => (url.Count(c => c == '/') > 5))
-                    .Take(5).ToList();
+        //    googleApiUrlList = googleApiUrlList
+        //            .Where(url => url.Contains("https://www.reddit.com") && url.Contains("/comments/"))
+        //            .Where(url => (url.Count(c => c == '/') > 5))
+        //            .Take(5).ToList();
 
-            return googleApiUrlList;
-        }
+        //    return googleApiUrlList;
+        //}
 
     }
 }
